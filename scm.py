@@ -1,40 +1,44 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+# Copyright (c) 2019 Gayathri Sugumar, gayathrisugumar21@gmail.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+
+
 #from _pytest.python import NoneType
 #from _pytest.python import NoneType
 __author__ = 'S.Gayathri'
 
-import sys, getopt
-import xml.etree.ElementTree as ET
-import random
-import os
-import os.path
-import copy
-from copy import deepcopy
-import subprocess
-from subprocess import call
-import re
-import shutil
 
-
-# nameoffile= 'timed-gate.xml'
-# tree = ET.parse(nameoffile)
-# root = tree.getroot()
-
-# FileNeme = nameoffile[:-4]
 
 
 # current path
 currpath= os.getcwd()
 print("now ",currpath)
-# with open('myverify.txt', 'a') as file:
-#     file.write('verifyta -t0 -f tracefile')
-# print Address_Invalid_Mut, Address_Valid_Mut
 
 
 
 def main(argv):
     inputfile = ''
     templatename = ''
-    queryfile = ''
     try:
         opts, args = getopt.getopt(argv,"hi:t:q:",["ifile=","tfile=","qfile="])
     except getopt.GetoptError:
@@ -52,17 +56,7 @@ def main(argv):
             queryfile = arg
     print('Input file is "', inputfile)
     print('template is "',templatename)
-    #print('Query file is "', queryfile)
-#   flag = False
-#     while(flag is False):
-#         stage = input("Which stage LIT to mutate? Specify 1,2,3.. ")
-#         if (stage in range(1,6)):
-#             flag = True
-#         else:
-#             print"Specify LIT to mutate in range 1 to 5"
-#         
-#     print "LIT to mutate is LIT"+str( stage)+ "01"
-#     type(stage)
+
         
         
     mut_list = ['ASD','ALD','ARD','STZ','STO','STS','BSL','BSR']
@@ -183,69 +177,20 @@ def main(argv):
     print('Mut_Change target::::::') 
     CT(inputfile[:-4], templatename)
     print('Mut_change Source::::::') 
-    CS(inputfile[:-4], templatename)    
-    #print('Mut_SL::::::') 
-    #SL(inputfile[:-4], templatename)
+    CS(inputfile[:-4], templatename)
     print('Mut_CI::::::') 
     C_I(inputfile[:-4], templatename)
     
     print('Mut_Change Guard::::::') 
     CG(inputfile[:-4], templatename)
     
-def NewDir(i):
-    print('in NewDir')
-    if not os.path.exists('Mutants_'+i+'_Valid'):
-        os.makedirs('Mutants_'+i+'_Valid')
-
-    if not os.path.exists('Mutants_'+i+'_INvalid'):
-        os.makedirs('Mutants_'+i+'_INvalid')
-
-def Change_dir(MyMy,answer):
-    dist_inv = str(os.getcwd())+Address_Invalid_Mut+str(MyMy)
-    dist_val = str(os.getcwd())+Address_Valid_Mut+str(MyMy)
-    src=str(os.getcwd())+'\\'+str(MyMy)
-    if answer=='yes':
-        shutil.move(MyMy,dist_val)
-        print('moved to valid folder')
-    if answer=='no':
-        shutil.move(MyMy,dist_inv)
-        print('moved to invalid folder')
 
 
 
 
 
-def CheckQueryMut(reachability, MyName):
-    try:
-        if reachability: # if reachability variable is true, then check reachability and deadlockfreeness,
 
-            #print 'The name of the model: ', MyName
-            output = subprocess.check_output('verifyta -t0 -f mytrace '+MyName+' query1.q', shell=False)
-            #print 'output is ',output
-            result_sat = re.search(r'\bProperty is satisfied',str(output))
-            #result_not_sat = re.search(r'\bProperty is NOT satisfied.',str(output))
-            output2 = subprocess.check_output('verifyta -t0 -f mytrace '+MyName+' query2.q', shell=False)
 
-            result_sat2 = re.search(r'\bProperty is satisfied', str(output2))
-            #result_not_sat2 = re.search(r'\bProperty is NOT satisfied.', str(output2))
-            #print 'result of regex:', result_sat, result_not_sat
-            if result_sat2!= None and result_sat != None:
-                return True
-            else:
-                return False
-        else: # otherwise we only check the deadlockfreeness
-            output = subprocess.check_output('verifyta -t0 -f mytrace ' + MyName + ' query1.q', shell=False)
-            # print 'output is ',output
-            result_sat = re.search(r'\bProperty is satisfied', str(output))
-
-            if result_sat!=None :
-                return True
-            else:
-                return False
-
-    except subprocess.CalledProcessError:
-        # print 'here is an error'
-        return False
 
 
 
@@ -820,38 +765,7 @@ def CS(inp,tem):#change Source of transition
                                 else:
                                     os.remove(MyName)
                           
-def SL(inp, tem): # has problem
-    for t in root.findall('template'):
-        r =  [loc.attrib['id'] for loc in t.findall('location')]
-        # for loc in t.findall('transition'):
-        #     x=loc.find("label[@kind='guard']")
-        #     if x!= None: h+=1
-        #print 'number of trans:',len(r)
-        #print 'main temp', t.find('name').text
-        if t.find('name').text==tem:
-            for ii in range(len(r)):
-                for k in range(len(r)):
-                    strin = 'transition['+str(k)+']'
-                    MyName=inp+'MUT_SL_'+str(k)+'_'+str(ii)+'.xml'
-                    tree.write(MyName)
-                    treex = ET.parse(MyName)
-                    rootx = treex.getroot()
-                    for t in rootx.findall('template'):
-                        ##print 'inside temp', t.find('name').text
-                        if t.find('name').text==tem:
-                            #print strin
-                            strin = 'transition['+str(k)+']'
-                            tra = t.find(strin)
-                            x=tra.find("label[@kind='target']") #find traget of a transition
-                            #print 'target of '+tra+ ' is',x
-                            if x is None:
-                                continue
-                            x.text='id_new'
-                            treex.write(MyName)
-                            # if CheckQuery(MyName):
-                            #     Change_dir(MyName,'yes')
-                            # else:
-                            #     Change_dir(MyName,'no')
+
 
 def CT(inp, tem):#change Target of transition
     for t in root.findall('template'):
@@ -986,11 +900,7 @@ def old_CG_v2(inp,tem):
                             else:
                                 os.remove(MyName)
 
-# NewDir()
 
-
-# current_path='\gayathri\Mutation_UPTA\mut_locations'
-# ChangeDIR()
 
 
 if __name__ == "__main__":
