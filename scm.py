@@ -40,20 +40,19 @@ def main(argv):
     inputfile = ''
     templatename = ''
     try:
-        opts, args = getopt.getopt(argv,"hi:t:q:",["ifile=","tfile=","qfile="])
+        opts, args = getopt.getopt(argv,"hi:t:q:",["ifile=","tfile="])
     except getopt.GetoptError:
-        print('Mut_opt.py -i <inputfile> -t <templatename> -q <queryfile>')
+        print('Mut_opt.py -i <inputfile> -t <templatename>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('mut_opt.py -i <inputfile> -t <templatename> -q <queryfile>')
+            print('mut_opt.py -i <inputfile> -t <templatename>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
         elif opt in ("-t","--tfile"):
             templatename = arg
-        elif opt in ("-q", "--qfile"):
-            queryfile = arg
+        
     print('Input file is "', inputfile)
     print('template is "',templatename)
 
